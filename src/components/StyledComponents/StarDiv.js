@@ -8,5 +8,6 @@ const StyledDiv = styled.div`
   border: solid;
   border-color: yellow;
   border-radius: 3px;
+
 `
 

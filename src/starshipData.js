@@ -3,7 +3,7 @@ import { ascending } from 'd3-array'
 import gql from 'graphql-tag'
 
 
-const ALL_STARSHIPS_INFO = gql`
+const STARSHIPS_DATA = gql`
 {
   allStarships(orderBy:length_ASC){
     name
@@ -21,4 +21,6 @@ const ALL_STARSHIPS_INFO = gql`
   }
 }
 `
+
+
 
