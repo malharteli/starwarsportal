@@ -76,7 +76,7 @@ d3.event.subject.fy = null;
   render(){
     return(
       <div>
-        <canvas ref="canvas" width = {1920} height ={1080}/>
+        <canvas ref="canvas" width = "window.innerWidth" height ="window.innerHeight"/>
       </div>
     )
   }
