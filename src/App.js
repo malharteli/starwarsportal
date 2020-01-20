@@ -16,6 +16,7 @@ const StyledDiv = styled.div`
   border-radius: 3px;
   display:flex;
   flex-direction:column;
+  align-items:center;
 `
 
 const StyledTitle = styled.div`
@@ -23,11 +24,20 @@ const StyledTitle = styled.div`
   font-size: 24px;
 `
 
+const StyledTable = styled.table`
+  border: solid;
+  margin: 0.25em;
+  padding: 0.25em;
+  color: yellow;
+  width: 50%;
+  text-align:center;
+`
+
 const StyledP = styled.p`
 
 `
 
-const GET_FIRSTGEN_INFO = gql`
+const GET_STARSHIP_INFO = gql`
 {
   allStarships(orderBy:length_ASC){
     name
@@ -47,58 +57,56 @@ const GET_FIRSTGEN_INFO = gql`
 `
 
 function App() {
-  const { data, loading, error} = useQuery(GET_FIRSTGEN_INFO)
+  const { data, loading, error} = useQuery(GET_STARSHIP_INFO)
 
-  const generateData = (value, length = 5) =>
-    d3.range(length).map((item, index) => ({
-      date: index,
-      value: value === null || value === undefined ? Math.random() * 100 : value
-    }));
 
-  const [datab, setData] = useState(generateData(0));
-  const changeData = () => {
-    setData(generateData());
-  };
-
-  useEffect(
-    () => {
-      setData(generateData());
-    },
-    [!data]
-  );
-
-  let infoData = []
+  let infoData = ''
 
   if (loading) return <p>loading...</p>
   if (error) return <p>Error... {error.message}</p>
   if (data) {
-    console.log(data)
-    if (data.allStarShips){
-    data.allStarShips.forEach((item, index)=>{
-      infoData.push({date: item.name, value: item.length})
-    })
+    infoData = data.allStarships.map(item => {
+      const container ={}
+      container["name"] = item.name
+      container["value"] = item.length
+      return container
+    }
+      )
     console.log(infoData)
-  }}
+  }
   return (
     <React.Fragment>
       {data.allStarships.map((item, index)=>
       <StyledDiv key={index}>
         <StyledTitle>{item.name}</StyledTitle>
-        <p>{item.length}</p>
-        <p>{item.crew}</p>
-        <p>{item.passengers}</p>
+        <StyledTable>
+          <thead>
+          <tr>
+            <th>Length</th>
+            <th>Crew Size</th>
+            <th>Total Capacity</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <td>{item.length}</td>
+          <td>{item.crew}</td>
+          <td>{item.passengers}</td>
+          </tr>
+          </tbody>
+        </StyledTable>
       </StyledDiv>)}
       <DragPush />
-      <div>
-        <span className="label">Animated Pie SVG (React Spring)</span>
+      <StyledDiv>
+        <span className="label">Breakdown of Ships by Length</span>
         <AnimatedPieSvg
           data={infoData}
-          width={200}
-          height={200}
-          innerRadius={60}
-          outerRadius={100}
+          width={400}
+          height={400}
+          innerRadius={0}
+          outerRadius={200}
         />
-      </div>
+      </StyledDiv>
     </React.Fragment>
   )
 }

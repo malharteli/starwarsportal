@@ -8,12 +8,15 @@ import * as d3 from "d3";
 
 class Canvas extends React.Component{
 
+
+
   componentDidMount(){
     const canvas = this.refs.canvas;
     const context = canvas.getContext("2d");
     const width = canvas.width;
     const height = canvas.height;
     const radius = 20;
+    const data = this.props.data
     var circles = d3.range(324).map(function(i) {
       return {
         x: (i % 25) * (radius + 1) * 2,
