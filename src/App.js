@@ -32,6 +32,10 @@ const StyledTable = styled.table`
   width: 50%;
   text-align:center;
 `
+const StyledContainer =styled.div`
+  margin-left: 10%;
+  margin-right: 10%;
+`
 
 const StyledP = styled.p`
 
@@ -68,7 +72,7 @@ function App() {
     infoData = data.allStarships.map(item => {
       const container ={}
       container["name"] = item.name
-      container["value"] = item.length
+      container["value"] = item.length + item.crew
       return container
     }
       )
@@ -76,6 +80,7 @@ function App() {
   }
   return (
     <React.Fragment>
+      <StyledContainer>
       {data.allStarships.map((item, index)=>
       <StyledDiv key={index}>
         <StyledTitle>{item.name}</StyledTitle>
@@ -91,12 +96,11 @@ function App() {
           <tr>
           <td>{item.length}</td>
           <td>{item.crew}</td>
-          <td>{item.passengers}</td>
+          <td>{item.passengers + item.crew}</td>
           </tr>
           </tbody>
         </StyledTable>
       </StyledDiv>)}
-      <DragPush />
       <StyledDiv>
         <span className="label">Breakdown of Ships by Length</span>
         <AnimatedPieSvg
@@ -107,6 +111,8 @@ function App() {
           outerRadius={200}
         />
       </StyledDiv>
+      <DragPush data ={infoData}/>
+      </StyledContainer>
     </React.Fragment>
   )
 }
