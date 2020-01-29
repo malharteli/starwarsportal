@@ -14,8 +14,6 @@ function dragend(item, d){
   d3.select(item).classed("dragging", false);
 }
 
-function hover(item){
-}
 
 class CircleChart extends React.Component {
   constructor(props){

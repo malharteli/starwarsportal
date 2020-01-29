@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
+import styled from 'styled-components'
 
 //This is an experiment of sorts
 //Basically, I'm implementing D3 example Force Dragging II into React.
@@ -8,8 +9,6 @@ import * as d3 from "d3";
 
 class Canvas extends React.Component{
 
-
-
   componentDidMount(){
     const canvas = this.refs.canvas;
     const context = canvas.getContext("2d");
@@ -17,17 +16,22 @@ class Canvas extends React.Component{
     const height = canvas.height;
     const radius = 20;
     const data = this.props.data
+    let sum = 0;
+    data.forEach(d=> {sum += d.value});
     var circles = d3.range(data.length).map(function(i) {
       return {
-        x: (data[i].value % 25) * (radius + 1) * 2,
-        y: Math.floor(data[i].value / 25) * (radius + 1) * 2,
+        x: (data[i].value/sum * width) * (radius + 1) * 2,
+        y: Math.floor(data[i].value/sum * width) * (radius + 1) * 2,
         value: data[i].value,
         name: data[i].name
       };
     });
 
+var attractForce = d3.forceManyBody().strength(80).distanceMax(400).distanceMin(80);
+var collisionForce = d3.forceCollide(d=>d.value*0.02).strength(1).iterations(100);
+
 var simulation = d3.forceSimulation(circles)
-.force("collide", d3.forceCollide(radius + 1).iterations(4))
+.force("collide", collisionForce).force("attract", attractForce)
 .on("tick", drawCircles);
 
 d3.select(canvas)
@@ -42,18 +46,21 @@ function drawCircles() {
 context.clearRect(0, 0, width, height);
 context.save();
 context.beginPath();
+context.textAlign = "center"
 circles.forEach(drawCircle);
-context.fill();
-context.strokeStyle = "#fff";
+context.strokeStyle = "yellow";
 context.stroke();
 }
 
 function drawCircle(d) {
-context.moveTo(d.x + d.value/2 , d.y);
-context.arc(d.x, d.y, (d.value/2), 0, 2 * Math.PI);
+context.moveTo(d.x + d.value/20, d.y);
+context.arc(d.x, d.y, (d.value/20), 0, 2 * Math.PI);
+context.fillText(d.name, d.x, d.y)
+context.strokeText(d.name, d.x, d.y)
 }
 
 function dragsubject() {
+  console.log(d3.event)
 return simulation.find(d3.event.x, d3.event.y, radius);
 }
 
@@ -78,7 +85,7 @@ d3.event.subject.fy = null;
   render(){
     return(
       <div>
-        <canvas ref="canvas" width = "1280" height ="720"/>
+        <canvas ref="canvas" width="1280" height="1920"/>
       </div>
     )
   }
