@@ -17,10 +17,12 @@ class Canvas extends React.Component{
     const height = canvas.height;
     const radius = 20;
     const data = this.props.data
-    var circles = d3.range(324).map(function(i) {
+    var circles = d3.range(data.length).map(function(i) {
       return {
-        x: (i % 25) * (radius + 1) * 2,
-        y: Math.floor(i / 25) * (radius + 1) * 2
+        x: (data[i].value % 25) * (radius + 1) * 2,
+        y: Math.floor(data[i].value / 25) * (radius + 1) * 2,
+        value: data[i].value,
+        name: data[i].name
       };
     });
 
@@ -47,8 +49,8 @@ context.stroke();
 }
 
 function drawCircle(d) {
-context.moveTo(d.x + radius, d.y);
-context.arc(d.x, d.y, radius, 0, 2 * Math.PI);
+context.moveTo(d.x + d.value/2 , d.y);
+context.arc(d.x, d.y, (d.value/2), 0, 2 * Math.PI);
 }
 
 function dragsubject() {
@@ -76,7 +78,7 @@ d3.event.subject.fy = null;
   render(){
     return(
       <div>
-        <canvas ref="canvas" width = "window.innerWidth" height ="window.innerHeight"/>
+        <canvas ref="canvas" width = "1280" height ="720"/>
       </div>
     )
   }
