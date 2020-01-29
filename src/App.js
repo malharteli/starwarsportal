@@ -60,7 +60,22 @@ const GET_STARSHIP_INFO = gql`
 }
 `
 
-function App() {
+const GET_PLANET_INFO = gql`{
+  allPlanets(orderBy:population_DESC, filter:{population_gt:0}){
+    name
+    diameter
+    gravity
+    population
+    surfaceWater
+    climate
+    films(orderBy:episodeId_ASC){
+      title
+    }
+  }
+}
+`
+
+function ShipData() {
   const { data, loading, error} = useQuery(GET_STARSHIP_INFO)
 
 
@@ -115,6 +130,67 @@ function App() {
       </StyledContainer>
     </React.Fragment>
   )
+}
+
+function PlanetData() {
+  const { data, loading, error} = useQuery(GET_PLANET_INFO)
+
+
+  let infoData = ''
+
+  if (loading) return <p>loading...</p>
+  if (error) return <p>Error... {error.message}</p>
+  if (data) {
+    infoData = data.allPlanets.map(item => {
+      const container ={}
+      container["name"] = item.name
+      container["value"] = item.population
+      return container
+    }
+      )
+    console.log(infoData)
+  }
+  return (
+    <React.Fragment>
+      <StyledContainer>
+      {/* {data.allPlanets.map((item, index)=>
+      <StyledDiv key={index}>
+        <StyledTitle>{item.name}</StyledTitle>
+        <StyledTable>
+          <thead>
+          <tr>
+            <th>Diameter</th>
+            <th>Climate</th>
+            <th>Population</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <td>{item.diameter? item.diameter: "unknown"}</td>
+          <td>{item.climate}</td>
+          <td>{item.population}</td>
+          </tr>
+          </tbody>
+        </StyledTable>
+      </StyledDiv>)}
+      <StyledDiv>
+        <span className="label">Breakdown of Planets by Population</span>
+        <AnimatedPieSvg
+          data={infoData}
+          width={400}
+          height={400}
+          innerRadius={0}
+          outerRadius={200}
+        />
+      </StyledDiv> */}
+      <DragPush data ={infoData}/>
+      </StyledContainer>
+    </React.Fragment>
+  )
+}
+
+function App(){
+  return PlanetData()
 }
 
 export default App;

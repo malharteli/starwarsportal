@@ -5,7 +5,12 @@ import styled from 'styled-components'
 //This is an experiment of sorts
 //Basically, I'm implementing D3 example Force Dragging II into React.
 
-
+const StyledCanvas = styled.canvas`
+width: 640px;
+height: 320px;
+position: absolute;
+border: 2px solid yellow;
+`
 
 class Canvas extends React.Component{
 
@@ -18,17 +23,21 @@ class Canvas extends React.Component{
     const data = this.props.data
     let sum = 0;
     data.forEach(d=> {sum += d.value});
+    // sum = 30000000
+    console.log(sum)
     var circles = d3.range(data.length).map(function(i) {
       return {
-        x: (data[i].value/sum * width) * (radius + 1) * 2,
-        y: Math.floor(data[i].value/sum * width) * (radius + 1) * 2,
+        // x: (data[i].value/ 25) * (radius + 1) * 2,
+        // y: Math.floor(data[i].value % 25) * (radius + 1) * 2,
+        x: (data[i].value % 25) * (radius + 1) * 2,
+        y: Math.floor(data[i].value / 25) * (radius + 1) * 2,
         value: data[i].value,
         name: data[i].name
       };
     });
 
-var attractForce = d3.forceManyBody().strength(80).distanceMax(400).distanceMin(80);
-var collisionForce = d3.forceCollide(d=>d.value*0.02).strength(1).iterations(100);
+var attractForce = d3.forceManyBody().strength(80).distanceMax(200).distanceMin(80);
+var collisionForce = d3.forceCollide(/*d=>d.value/sum * width*/ 20).strength(1).iterations(100);
 
 var simulation = d3.forceSimulation(circles)
 .force("collide", collisionForce).force("attract", attractForce)
@@ -53,8 +62,8 @@ context.stroke();
 }
 
 function drawCircle(d) {
-context.moveTo(d.x + d.value/20, d.y);
-context.arc(d.x, d.y, (d.value/20), 0, 2 * Math.PI);
+context.moveTo(d.x, d.y);
+context.arc(d.x, d.y, (radius), 0, 2 * Math.PI);
 context.fillText(d.name, d.x, d.y)
 context.strokeText(d.name, d.x, d.y)
 }
@@ -85,7 +94,7 @@ d3.event.subject.fy = null;
   render(){
     return(
       <div>
-        <canvas ref="canvas" width="1280" height="1920"/>
+        <StyledCanvas ref="canvas" width="640px" height="320px"/>
       </div>
     )
   }
